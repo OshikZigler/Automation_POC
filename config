@@ -8,11 +8,12 @@ device.android.version = 8.0.0
 emulator.android.version = 7.0
 
 # device name
-emulator.android.name = Android Emulator
 device.android.name = 5210aaa2f48944bd
+emulator.android.name = Android Emulator
+
 
 # app path
-app.android.path = app/HouzzApp_26046.apk
+app.android.path = /Users/oshikzigler/Documents/Automation/Test_APK/HouzzApp_26388.apk
 
 #app activity
 app.activity = SplashScreenActivity

@@ -1,31 +1,49 @@
 package PageObject;
 
-import Utils.Base;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
-import io.appium.java_client.pagefactory.AndroidFindBy;
+import Utils.Driver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
-public class OnBoardingScreen extends Base {
+public class OnBoardingScreen extends Driver {
 
+    //PageObject object
+    PageObjects onBoardingScreen;
 
-    //public AndroidDriver driver;
-
-    public OnBoardingScreen(AndroidDriver driver) {
-        this.driver = driver;
+    //Constructor
+    public OnBoardingScreen(){
+        super();
+        onBoardingScreen = new PageObjects();
+        PageFactory.initElements(driver , onBoardingScreen);
     }
 
-    //OnBoardingScreen Elements
-    @AndroidFindBy(id = "com.houzz.app:id/logIn")
-    public AndroidElement loginButton;
+    //OnBoardingScreen Elements (com.houzz.app:id/)
+    class PageObjects {
+
+        //OBJECTS
+        @FindBy(id = "logIn")
+        public WebElement loginButton;
+
+        //METHODS
+        public boolean validateLoginpage() {
+            boolean elements = false;
+            if (onBoardingScreen.loginButton.isDisplayed()) {
+                elements = true;
+            } else {
+                elements = false;
+            }
+            return elements;
 
 
-    //OnBoardingScreen Methods
-    public void verifyElementIsDisplayed(){
-        commonMethods.verifyElementIsDisplayed(loginButton);
+        /*public void verifyElementIsDisplayed() {
+            commonMethods.verifyElementIsDisplayed(loginButton);
+        }
+
+        public void clickOnLogin() {
+            loginButton.click();
+        }*/
+
+        }
     }
-    public void clickOnLogin(){
-        loginButton.click();
-    }
-
 
 }

@@ -1,27 +1,17 @@
 import PageObject.OnBoardingScreen;
-import Utils.Base;
-import org.openqa.selenium.support.PageFactory;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeSuite;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.net.MalformedURLException;
+@FixMethodOrder(MethodSorters.JVM)
 
-public class OnBoardingScreenTest extends Base {
+public class OnBoardingScreenTest extends OnBoardingScreen {
 
-    //Starting Appium driver + initializing AndroidElement
-    @BeforeSuite
-    public void createSession() throws MalformedURLException {
-        setDriver();
-    }
-
-    @BeforeClass
-    public void initElements() {
-        onBoardingScreen = PageFactory.initElements(driver , OnBoardingScreen.class);
-    }
+    OnBoardingScreen onBoardingScreen = new OnBoardingScreen();
 
     @BeforeTest
+
     public void elementVerification(){
         onBoardingScreen.verifyElementIsDisplayed();
     }

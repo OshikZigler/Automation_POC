@@ -1,12 +1,13 @@
 package Utils;
 
-import PageObject.OnBoardingScreen;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.remote.AutomationName;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.remote.MobilePlatform;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,11 +17,45 @@ import java.util.Properties;
 
 public class Base {
 
-    public static AndroidDriver driver;
-    public static OnBoardingScreen onBoardingScreen;
     public static CommonMethods commonMethods = new CommonMethods();
 
+    private DesiredCapabilities capabilities = new DesiredCapabilities();
+    private static AndroidDriver androidDriver = null;
 
+    @BeforeClass
+    //Initializing Android driver
+    public void setup() {
+        initDriver();
+    }
+
+    //Getting Android driver
+    public AndroidDriver getDriver() {
+        return androidDriver;
+    }
+
+    private void initDriver() {
+
+        DesiredCapabilities caps = new DesiredCapabilities();
+
+        caps.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
+        caps.setCapability(MobileCapabilityType.PLATFORM_VERSION, Base.readProperty("device.android.version"));
+        caps.setCapability(MobileCapabilityType.DEVICE_NAME, Base.readProperty("device.android.name"));
+        caps.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2);
+        caps.setCapability(MobileCapabilityType.APP, new File(Base.readProperty("app.android.path")).getAbsolutePath());
+        caps.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, Base.readProperty("app.package"));
+        caps.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, Base.readProperty("app.activity"));
+
+        String serverURL = "http://" + Base.readProperty("run.ip") + ":" + Base.readProperty("run.port") + "/wd/hub";
+
+        try {
+            androidDriver = new AndroidDriver(new URL(serverURL), capabilities);
+        } catch (NullPointerException | MalformedURLException exception) {
+            throw new RuntimeException("Appium server could not be initialized for this device");
+        }
+
+    }
+
+    //Setting configuration file
     public static String readProperty(String property) {
 
         Properties properties;
@@ -42,26 +77,9 @@ public class Base {
         return value;
     }
 
-    //Setting Android driver with desired capabilities from config file
-
-    public static AndroidDriver setDriver() throws MalformedURLException {
-
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        String completeURL = "http://" + Base.readProperty("run.ip") + ":" + Base.readProperty("run.port") + "/wd/hub";
-
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, MobilePlatform.ANDROID);
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, Base.readProperty("device.android.version"));
-        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, Base.readProperty("device.android.name"));
-        capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, AutomationName.ANDROID_UIAUTOMATOR2);
-        capabilities.setCapability(MobileCapabilityType.APP, new File(Base.readProperty("app.android.path")).getAbsolutePath());
-        capabilities.setCapability(AndroidMobileCapabilityType.APP_PACKAGE, Base.readProperty("app.package"));
-        capabilities.setCapability(AndroidMobileCapabilityType.APP_ACTIVITY, Base.readProperty("app.activity"));
-
-          driver = new AndroidDriver(new URL(completeURL), capabilities);
-
-        return driver;
+    @AfterClass
+    public void tearDown(){
+        androidDriver.quit();
     }
-
-
 
 }
